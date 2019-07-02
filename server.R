@@ -34,7 +34,7 @@ beta_h = function( V){
 
 
 
-shinyServer((function(input, output) { 
+shinyServer(function(input, output) { 
 
 output$Plot1 <- renderPlot({
 t <- seq(0, input$tmax, by=.1)
