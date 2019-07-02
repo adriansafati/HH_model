@@ -4,7 +4,8 @@ library(shiny)
 # Define UI
 shinyUI(pageWithSidebar(
     headerPanel("Hodgkin Huxley Model") ,
-    sidebarPanel(
+
+        sidebarPanel(
              wellPanel(tags$h4("Initial State :"),
                  
                 sliderInput("V", "V_0:", 
@@ -41,16 +42,17 @@ shinyUI(pageWithSidebar(
                    sliderInput("El", "Leak E_L:", 
                               value=10.6130, min=-100, max=100, step=1)),
     
+       
  
  
 
-      wellPanel(tags$b("Initial state:"), 
-        checkboxInput("withSimulation", "withoutSimulation", value=FALSE), 
-         conditionalPanel(condition="input.withSimulation == false", 
-              numericInput("t1", "Time1):", value=20, min = NA, max = NA, step = NA,width= NULL),
-          numericInput("t2", "Time1):", value=50, min = NA, max = NA, step = NA,width =NULL))),
+      wellPanel(tags$h5("Stimulation:"), 
+        checkboxInput("Stimulation", "withoutStimulation", value=FALSE), 
+         conditionalPanel(condition="input.Stimulation == false", 
+              numericInput("t1", "Time Stimulation", value=50, min = 0, max = 1000, step = 1))),
+          
 
-        wellPanel(tags$b("Time scale:"),
+        wellPanel(tags$h5("Time scale:"),
                   selectInput("timex", label="",
                               choices=list("mS")),
                   conditionalPanel(condition="input.timex == 'mS'",
@@ -61,24 +63,32 @@ shinyUI(pageWithSidebar(
 
         wellPanel(tags$h5("Created by Ines Krissaane"),
                   tags$body("(", tags$a("Git",
-                                        href="http://github.com/ineskris"), ")"))),
+                                        href="https://github.com/ineskris/HH_model"), ")"))),
     
     mainPanel(plotOutput("Plot1"),
               plotOutput("Plot2"),
               plotOutput("Plot3"),
               wellPanel(tags$body(h3("About"), 
-                            p(("This is a tool to easily visualize Hodgkin Huxley ODE model.The same implementation is available in Python"),
-                            h3("Things to note"), 
-withMathJax("$$I  = C_M \\frac{dV}{dt} + I_i \\  I_i =I_{Na} + I_K + I_L $$"),
-withMathJax("$$ I_i =I_{Na} + I_K + I_L $$"),
-withMathJax("$$ \\frac{dn}{dt} = \\alpha_{n}(1-n) - \\beta_{n}*n$$"),
-withMathJax("$$ \\frac{dm}{dt} = \\alpha_{m}(1-m) - \\beta_{m}*m  $$"),
-withMathJax("$$ \\frac{dh}{dt} = \\alpha_{h}(1-h) - \\beta_{h}*h $$"),
-p("I is the total membrane current density (inward current positive); I_i is the ionic current density (inward current positive); V is the displacement of the membrane potential from its resting value; C_M is the membrane capacity per unit area, t is time.")
-))))
-                              
-                       
+                            p(("This is a tool to easily visualize Hodgkin Huxley ODEs. model"),
+                              h3("Equations"), 
+                              p(""
+                               ),
+                            withMathJax("$$I  = C_M \\frac{dV}{dt} + I_i \\  I_i =I_{Na} + I_K + I_L $$"),
+                            
+                            
+                             withMathJax("$$ I_i =I_{Na} + I_K + I_L $$"),
+                             withMathJax("$$ \\frac{dn}{dt} = \\alpha_{n}(1-n) - \\beta_{n}*n$$"),
+                             withMathJax("$$ \\frac{dm}{dt} = \\alpha_{m}(1-m) - \\beta_{m}*m  $$"),
+                             withMathJax("$$ \\frac{dh}{dt} = \\alpha_{h}(1-h) - \\beta_{h}*h $$")
+
+                            ))
+                              ))
 ))
+    
+
+
+
+
     
 
 
