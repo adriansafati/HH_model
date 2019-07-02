@@ -68,24 +68,16 @@ shinyUI(pageWithSidebar(
               plotOutput("Plot3"),
               wellPanel(tags$body(h3("About"), 
                             p(("This is a tool to easily visualize Hodgkin Huxley ODE model.The same implementation is available in Python"),
-                              h3("Things to note"), 
-                              p("
-- I is the total membrane current density (inward current positive); \\
-- I_i is the ionic current density (inward current positive); \\
-- V is the displacement of the membrane potential from its resting value (depolarization negative); \\
-- C_M is the membrane capacity per unit area (assumed constant); \\
-t is time."
-                               ),
-                            withMathJax("$$I  = C_M \\frac{dV}{dt} + I_i \\  I_i =I_{Na} + I_K + I_L $$"),
-                            
-                            
-                             withMathJax("$$ I_i =I_{Na} + I_K + I_L $$"),
-                             withMathJax("$$ \\frac{dn}{dt} = \\alpha_{n}(1-n) - \\beta_{n}*n$$"),
-                             withMathJax("$$ \\frac{dm}{dt} = \\alpha_{m}(1-m) - \\beta_{m}*m  $$"),
-                             withMathJax("$$ \\frac{dh}{dt} = \\alpha_{h}(1-h) - \\beta_{h}*h $$")
-
-                            ))
-                              ))
+                            h3("Things to note"), 
+withMathJax("$$I  = C_M \\frac{dV}{dt} + I_i \\  I_i =I_{Na} + I_K + I_L $$"),
+withMathJax("$$ I_i =I_{Na} + I_K + I_L $$"),
+withMathJax("$$ \\frac{dn}{dt} = \\alpha_{n}(1-n) - \\beta_{n}*n$$"),
+withMathJax("$$ \\frac{dm}{dt} = \\alpha_{m}(1-m) - \\beta_{m}*m  $$"),
+withMathJax("$$ \\frac{dh}{dt} = \\alpha_{h}(1-h) - \\beta_{h}*h $$"),
+p("I is the total membrane current density (inward current positive); I_i is the ionic current density (inward current positive); V is the displacement of the membrane potential from its resting value; C_M is the membrane capacity per unit area, t is time.")
+))))
+                              
+                       
 ))
     
 
