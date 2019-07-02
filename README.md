@@ -12,7 +12,7 @@ The Hodgkin–Huxley model, or conductance-based model, is a mathematical model 
 
 ### To run the model on your own computer
 
-If you want to run this on your own computer, make sure you have `shiny`, `quantmod`, and `deSolve` installed. Then run the following command: `shiny::runGitHub('HodgkinHuxleyModel', 'ineskris')`
+If you want to run this on your own computer, make sure you have `shiny`, `quantmod`, `reshape2` and `deSolve` installed. Then run the following command: `shiny::runGitHub('HodgkinHuxleyModel', 'ineskris')`
 
 Or copy and paste the following script.
 
@@ -31,11 +31,17 @@ if (!require(deSolve)) {
     install.packages("deSolve")
     library(deSolve)
 } 
+if (!require(reshape2)) {
+    install.packages("reshape2")
+    library(deSolve)
+} 
 
 ## Load libraries
 require(deSolve)
 require(quantmod)
 require(shiny)
+require(reshape2)
+
 
 ## Run shinyapp
 shiny::runGitHub('HH_model', 'ineskris')
