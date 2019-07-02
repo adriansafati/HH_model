@@ -1,8 +1,7 @@
-library(shiny); library(deSolve); library(ggplot2); library(quantmod)
+library(shiny); library(deSolve); library(ggplot2); library(quantmod); library(reshape2)
 
 
 #define functions of the model
-
 I_Na = function(V, m, h, g_Na, E_Na){
   return(g_Na * m**3 * h * (V - E_Na))
 }
@@ -32,6 +31,34 @@ beta_h = function( V){
   return (1.0/(exp(-(V+45.0) / 10.0)+1))
 }
 
+
+
+
+shinyServer((function(input, output) { 
+
+output$Plot1 <- renderPlot({
+t <- seq(0, input$tmax, by=.1)
+state =  c(V = input$V, n = input$n, m=input$m  , h= input$h)
+parameters <- c(C_m=input$M , g_Na = input$S, g_k=input$P , g_l=input$L, E_Na =input$V+input$Ena, E_K=input$V+input$Ek, E_L=input$V+input$El)
+
+if (input$Stimulation==TRUE){ dALLdt = function(t, state, params){
+  with(as.list(c(state,params)),{
+    dV = (-I_Na(V, m, h, g_Na, E_Na)-I_K(V, n,  g_k, E_K)-I_L(V,g_l, E_L)) / C_m   
+    dn = alpha_n(V)*(1.0-n) - beta_n(V)*n
+    dm = alpha_m(V)*(1.0-m) - beta_m(V)*m
+    dh = alpha_h(V)*(1.0-h) - beta_h(V)*h
+    return (list(c(dV, dn, dm, dh)))
+  })
+}}
+
+if (input$Stimulation==FALSE){
+  I_stim = function(t){
+#l1= c(input$t1,input$t2)
+#l2 = c(input$t1+0.5,input$t2+0.5)
+#for (i in 1:length(l1)){
+if (input$t1<t & t<input$t1+0.5){return(50)}
+else { return(0)}}
+
 dALLdt = function(t, state, params){
   with(as.list(c(state,params)),{
     dV = (I_stim(t)-I_Na(V, m, h, g_Na, E_Na)-I_K(V, n,  g_k, E_K)-I_L(V,g_l, E_L)) / C_m   
@@ -41,25 +68,13 @@ dALLdt = function(t, state, params){
     return (list(c(dV, dn, dm, dh)))
   })
 }
-
-shinyServer(function(input, output) { 
-
-output$Plot1 <- renderPlot({
-t <- seq(0, input$tmax, by=.1)
-state =  c(V = input$V, n = input$n, m=input$m  , h= input$h)
-parameters <- c(C_m=input$M , g_Na = input$S, g_k=input$P , g_l=input$L, E_Na =input$V+input$Ena, E_K=input$V+input$Ek, E_L=input$V+input$El)
-
-I_stim = function(t){
-l1= c(input$t1,input$t2)
-l2 = c(input$t1+0.5,input$t2+0.5)
-for (i in 1:length(l1)){if (10<l1[i] & t<l2[1]){return(20)}
-else { return(0)}}}
-
+}
 
 
 out <- ode(y = state, time = t, func = dALLdt, parms = parameters)
 out.df = as.data.frame(out)
-#if (input.withSimulation==TRUE) I_stim() <- 0
+
+
 plot1 <- ggplot(out.df, aes(time, V)) + geom_line(size = 0.3)  + theme(axis.title.x = element_text(size = 16),axis.text.x = element_text(size = 16), axis.title.y = element_text(size = 16))  +xlab("Time in ms") 
 print(plot1)
 })  
@@ -67,22 +82,88 @@ print(plot1)
 output$Plot2 <- renderPlot({
 t <- seq(0, input$tmax, by=.1)
 state =  c(V = input$V, n = input$n, m=input$m  , h= input$h)
-parameters <- c(C_m=input$M , g_Na = input$S, g_k=input$P , g_l=input$L, E_Na =input$V+input$Ena, E_K=input$V+input$Ek, E_L=input$V+input$El)
+parameters <- c(C_m=input$M , g_Na = input$S, g_k=input$P , g_l=input$L, E_Na =input$Ena, E_K=input$Ek, E_L=input$El)
+
+if (input$Stimulation==TRUE){ dALLdt = function(t, state, params){
+  with(as.list(c(state,params)),{
+    dV = (-I_Na(V, m, h, g_Na, E_Na)-I_K(V, n,  g_k, E_K)-I_L(V,g_l, E_L)) / C_m   
+    dn = alpha_n(V)*(1.0-n) - beta_n(V)*n
+    dm = alpha_m(V)*(1.0-m) - beta_m(V)*m
+    dh = alpha_h(V)*(1.0-h) - beta_h(V)*h
+    return (list(c(dV, dn, dm, dh)))
+  })
+}}
+
+if (input$Stimulation==FALSE){
+  I_stim = function(t){
+#l1= c(input$t1,input$t2)
+#l2 = c(input$t1+0.5,input$t2+0.5)
+#for (i in 1:length(l1)){
+if (input$t1<t & t<input$t1+0.5){return(50)}
+else { return(0)}}
+
+dALLdt = function(t, state, params){
+  with(as.list(c(state,params)),{
+    dV = (I_stim(t)-I_Na(V, m, h, g_Na, E_Na)-I_K(V, n,  g_k, E_K)-I_L(V,g_l, E_L)) / C_m   
+    dn = alpha_n(V)*(1.0-n) - beta_n(V)*n
+    dm = alpha_m(V)*(1.0-m) - beta_m(V)*m
+    dh = alpha_h(V)*(1.0-h) - beta_h(V)*h
+    return (list(c(dV, dn, dm, dh)))
+  })
+}
+}
+
+
+
 out <- ode(y = state, time = t, func = dALLdt, parms = parameters)
 
 
 out.df = as.data.frame(out)
 df = out.df[,c('time', 'm', 'h', 'n')]
 df = melt(df, id.vars='time') 
+
 plot2 <- ggplot(df, aes(time, value, color = variable)) + geom_line(size=0.5) + theme(axis.title.x = element_text(size = 16),axis.text.x = element_text(size = 16), axis.title.y = element_text(size = 16)) +xlab("Time in ms") + ylab('Gating Value') + theme(legend.position="bottom") + theme(legend.title=element_blank()) + theme( legend.text=element_text(size=20, face = "bold")) + theme(legend.key.width = unit(1,"cm"))  + scale_fill_brewer(palette="Set1")
 print(plot2) 
         
     })
         
 output$Plot3 <- renderPlot({
-t <- seq(0, input$tmax, by=.1)
-state =  c(V = input$V, n = input$n, m=input$m  , h= input$h)
-parameters <- c(C_m=input$M , g_Na = input$S, g_k=input$P , g_l=input$L, E_Na =input$V+input$Ena, E_K=input$V+input$Ek, E_L=input$V+input$El)
+    t <- seq(0, input$tmax, by=.1)
+  state =  c(V = input$V, n = input$n, m=input$m  , h= input$h)
+parameters <- c(C_m=input$M , g_Na = input$S, g_k=input$P , g_l=input$L, E_Na =input$Ena, E_K=input$Ek, E_L=input$El)
+
+if (input$Stimulation==TRUE){dALLdt = function(t, state, params){
+  with(as.list(c(state,params)),{
+    dV = (-I_Na(V, m, h, g_Na, E_Na)-I_K(V, n,  g_k, E_K)-I_L(V,g_l, E_L)) / C_m   
+    dn = alpha_n(V)*(1.0-n) - beta_n(V)*n
+    dm = alpha_m(V)*(1.0-m) - beta_m(V)*m
+    dh = alpha_h(V)*(1.0-h) - beta_h(V)*h
+    return (list(c(dV, dn, dm, dh)))
+  })
+}}
+
+if (input$Stimulation==FALSE){
+  I_stim = function(t){
+#l1= c(input$t1,input$t2)
+#l2 = c(input$t1+0.5,input$t2+0.5)
+#for (i in 1:length(l1)){
+if (input$t1<t & t<input$t1+0.5){return(50)}
+else { return(0)}}
+
+dALLdt = function(t, state, params){
+  with(as.list(c(state,params)),{
+    dV = (I_stim(t)-I_Na(V, m, h, g_Na, E_Na)-I_K(V, n,  g_k, E_K)-I_L(V,g_l, E_L)) / C_m   
+    dn = alpha_n(V)*(1.0-n) - beta_n(V)*n
+    dm = alpha_m(V)*(1.0-m) - beta_m(V)*m
+    dh = alpha_h(V)*(1.0-h) - beta_h(V)*h
+    return (list(c(dV, dn, dm, dh)))
+  })
+}
+}
+
+
+
+
 out <- ode(y = state, time = t, func = dALLdt, parms = parameters)
 
 out.df = as.data.frame(out)
