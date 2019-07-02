@@ -38,5 +38,5 @@ require(quantmod)
 require(shiny)
 
 ## Run shinyapp
-shiny::runGitHub('HodgkinHuxleyModel', 'ineskris')
+shiny::runGitHub('HH_model', 'ineskris')
 ```
