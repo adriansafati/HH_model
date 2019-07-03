@@ -33,7 +33,7 @@ if (!require(deSolve)) {
 } 
 if (!require(reshape2)) {
     install.packages("reshape2")
-    library(deSolve)
+    library(reshape2)
 } 
 
 ## Load libraries
